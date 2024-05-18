@@ -10,5 +10,6 @@ crate-type = ["cdylib"]
 
 [dependencies]
 pyo3 = "0.21.2"
+rayon = "1.10.0"
 text-splitter = { version = "0.13.1", features = ["tokenizers"] }
 tokenizers = { version = "0.19.1", features = ["http"] }

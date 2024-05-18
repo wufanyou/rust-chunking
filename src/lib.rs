@@ -1,9 +1,7 @@
 use pyo3::prelude::*;
-use pyo3::types::PyList;
 use text_splitter::{ChunkConfig, TextSplitter};
 use tokenizers::Tokenizer;
-
-
+use rayon::prelude::*;
 fn split(text: &str) {
     let tokenizer = Tokenizer::from_file("./resource/tokenizer.json").unwrap();
     let max_tokens = 1;
@@ -35,14 +33,18 @@ impl MyTextSplitter {
     fn chunks<'text, 'splitter: 'text>(&'splitter self, text: &'text str) -> Vec<&'text str> {
         self.splitter.chunks(text).collect()
     }
-    // TODO: make praliline happened
-    fn chunks_batch<'text, 'splitter: 'text>(&'splitter self, text: Vec<Vec<u8>>) {
-        for x in text {
-            let string = String::from_utf8(x).expect("Our bytes should be valid utf8");
-            println!("{string}")
-        }
+    fn chunks_batch<'text, 'splitter: 'text>(&'splitter self, text: Vec<String>) -> Vec<Vec<String>>{
+        let output:Vec<Vec<String>> = text.into_par_iter().map(|t:String| {
+            let mut temp: Vec<String> = Vec::new();
+            for c in self.splitter.chunks(t.as_str()) {
+                temp.push(String::from(c));
+            }
+            temp
+        }).collect();
+        return output
     }
 }
+
 
 /// A Python module implemented in Rust.
 #[pymodule]
