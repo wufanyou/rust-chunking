@@ -1,14 +1,16 @@
 mod html;
 mod similarity;
 
+use ammonia::clean_text;
 use pyo3::prelude::*;
-use text_splitter::{ChunkConfig, TextSplitter};
+use text_splitter::{ChunkConfig, ChunkSizer, TextSplitter, Characters};
 use tokenizers::{Tokenizer, tokenizer};
 use rayon::prelude::*;
 
 #[pyclass(frozen, name = "MyTextSplitter")]
 struct MyTextSplitter {
     splitter: TextSplitter<Tokenizer>,
+    //splitter:TextSplitter<Characters>,
     max_tokens: usize,
 }
 
@@ -23,20 +25,18 @@ impl MyTextSplitter {
             max_tokens
         })
     }
-
-    fn chunks<'text, 'splitter: 'text>(&'splitter self, text: &'text str) -> Vec<&'text str> {
-        self.splitter.chunks(text).collect()
+    fn chunks<'text, 'splitter: 'text>(&'splitter self, text: &'text str) -> Vec<String> {
+        let clean_string = html::convert(text);
+        let mut temp: Vec<String> = Vec::new();
+        for c in self.splitter.chunks(clean_string.as_str()) {
+            temp.push(String::from(c));
+        }
+        temp
     }
-    fn chunks_batch<'text, 'splitter: 'text>(&'splitter self, text: Vec<String>) -> Vec<Vec<String>>{
+    fn chunks_batch<'splitter>(&'splitter self, text: Vec<String>) -> Vec<Vec<String>>{
         let output:Vec<Vec<String>> = text.into_par_iter().map(|t:String| {
-            let clean_string = html::convert(t.as_str(), self.max_tokens);
-            let mut temp: Vec<String> = Vec::new();
-            for c in self.splitter.chunks(clean_string.as_str()) {
-                temp.push(String::from(c));
-            }
-            temp
+            self.chunks(t.as_str())
         }).collect();
-        // similarity::test().expect("fail");
         output
     }
 }
