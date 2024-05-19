@@ -5,7 +5,7 @@ m = MyTextSplitter(max_tokens=256, file="/Users/fanyou/Documents/KDD2024/rusk-ch
 import time
 
 s = time.time()
-output = m.chunks_batch_v2(['a'*5000]*32)
+output = m.chunks_batch(['a'*5000]*32)
 print(time.time()-s)
 
 # print(output)
