@@ -36,7 +36,7 @@ impl MyTextSplitter {
             }
             temp
         }).collect();
-        similarity::test().expect("fail");
+        // similarity::test().expect("fail");
         output
     }
 }
