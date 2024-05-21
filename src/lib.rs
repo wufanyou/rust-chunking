@@ -10,19 +10,18 @@ use rayon::prelude::*;
 #[pyclass(frozen, name = "MyTextSplitter")]
 struct MyTextSplitter {
     splitter: TextSplitter<Tokenizer>,
-    //splitter:TextSplitter<Characters>,
-    max_tokens: usize,
+    // splitter:TextSplitter<Characters>,
+    // max_tokens: usize,
 }
 
 #[pymethods]
 impl MyTextSplitter {
     #[new]
-    #[pyo3(signature = (max_tokens, file))]
-    fn new(max_tokens: usize, file: &str) -> PyResult<Self> {
+    #[pyo3(signature = (max_tokens, overlap, file))]
+    fn new(max_tokens: usize, overlap: usize, file: &str) -> PyResult<Self> {
         let tokenizer:Tokenizer = Tokenizer::from_file(file).unwrap();
         Ok(Self {
-            splitter: TextSplitter::new(ChunkConfig::new(max_tokens).with_sizer(tokenizer)),
-            max_tokens
+            splitter: TextSplitter::new(ChunkConfig::new(max_tokens).with_overlap(overlap).unwrap().with_sizer(tokenizer)),
         })
     }
     fn chunks<'text, 'splitter: 'text>(&'splitter self, text: &'text str) -> Vec<String> {

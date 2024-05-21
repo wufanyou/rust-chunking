@@ -16,7 +16,6 @@ pub(crate) fn convert(input:&str) -> String{
     let re = Regex::new(r"&lt;").unwrap();
     let trimmed_text = trimmed_text.to_string();
     let trimmed_text = re.replace_all(trimmed_text.as_str(), "<");
-
     let output = Builder::default()
                .rm_generic_attributes(&["src", "href"])
                .rm_tags(&["a", "img", "div", "span" , "p", "script", "noscript", "footer", "nav"])

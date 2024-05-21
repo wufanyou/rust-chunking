@@ -1,6 +1,6 @@
 from rusk_chunking import MyTextSplitter
 
-m = MyTextSplitter(max_tokens=512, file="/Users/fanyou/Documents/KDD2024/rusk-chunking/resource/tokenizer.json")
+m = MyTextSplitter(max_tokens=512, overlap = 128, file="/Users/fanyou/Documents/KDD2024/rusk-chunking/resource/tokenizer.json")
 
 import time
 
@@ -12,7 +12,8 @@ output = m.chunks_batch([file])
 
 for x in output:
     for y in x:
-        print(len(y))
+        print(y)
+        #print(len(y))
 
 print(time.time()-s)
 
