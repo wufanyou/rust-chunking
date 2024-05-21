@@ -1,6 +1,5 @@
 use ammonia::Builder;
 use regex::Regex;
-use html2text::from_read;
 use mdka::from_html;
 
 pub(crate) fn convert(input:&str) -> String{
@@ -10,7 +9,6 @@ pub(crate) fn convert(input:&str) -> String{
                    .rm_tags(&["a", "img", "div", "span" , "p", "script", "noscript", "footer", "nav"])
                    .link_rel(None)
                    .clean(input).to_string();
-
 
     let re = Regex::new(r"&gt;").unwrap();
     // let trimmed_text = trimmed_text.to_string();
@@ -26,7 +24,4 @@ pub(crate) fn convert(input:&str) -> String{
                 .clean(trimmed_text.as_ref()).to_string();
     let output = from_html(output.as_str());
     output
-    // let re = Regex::new(r"\s+").unwrap();
-    // let output = re.replace_all(output.as_str(), " ");
-    // output.to_string()
 }
